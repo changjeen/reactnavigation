@@ -16,6 +16,8 @@ class LogoTitle extends React.Component{
 class HomeScreen extends React.Component {
     // Title bar Options
     static navigationOptions = ({ navigation }) => {
+        const params = navigation.state.params || {};
+
         return {
             headerTitle: <LogoTitle />,
             headerRight: (
@@ -23,6 +25,9 @@ class HomeScreen extends React.Component {
                     title="+1"
                     onPress={() => navigation.getParam('increaseCount')}
                     color="#fff"/>
+            ),
+            headerLeft: (
+              <Button title="Info" onPress={()=> navigation.navigate('MyModal')} color="#fff"/>
             ),
         };
 
@@ -64,6 +69,21 @@ class HomeScreen extends React.Component {
             </View>
         );
     }
+}
+
+class ModalScreen extends React.Component {
+    render() {
+        return(
+            <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+                <Text style={{fontsize: 30}}>This is a modal </Text>
+                <Button
+                    onPress={() => this.props.navigation.goBack()}
+                    title="Dismiss"
+                />
+            </View>
+        );
+    }
+
 }
 
 
@@ -115,10 +135,14 @@ class DetailsScreen extends React.Component {
     }
 }
 
-const RootStack = createStackNavigator(
+const MainStack = createStackNavigator(
     {
-        Home: HomeScreen,
-        Details: DetailsScreen,
+        Home: {
+            screen: HomeScreen,
+        },
+        Details: {
+            screen: DetailsScreen,
+        },
     },
     {
         initialRouteName: 'Home',
@@ -133,6 +157,25 @@ const RootStack = createStackNavigator(
             },
         },
     }
+)
+
+
+
+
+const RootStack = createStackNavigator(
+    {
+        Main: {
+            screen: MainStack
+        },
+        MyModal: {
+            screen: ModalScreen,
+        }
+    },
+    {
+        mode: 'modal',
+        headerMode: 'none',
+    }
+
 );
 
 const AppContainer = createAppContainer(RootStack);
