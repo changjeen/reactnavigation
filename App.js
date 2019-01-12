@@ -1,18 +1,30 @@
 import React from 'react';
-import { Button, View, Text } from 'react-native';
+import { Button, View, Text, Image} from 'react-native';
 import { createStackNavigator, createAppContainer } from 'react-navigation';
+
+class LogoTitle extends React.Component{
+    render(){
+        return (
+            <Image
+                source={require('./spiro.png')}
+                style={{ width:30, height:30}}
+            />
+        );
+    }
+}
 
 class HomeScreen extends React.Component {
     // Title bar Options
     static navigationOptions = {
-        title: 'Homes',
-        headerStyle: {
-            backgroundColor: '#f4511e',
-        },
-        headerTintColor: '#fff',
-        headerTitleStyle: {
-            fontWeight: 'bold',
-        },
+        headerTitle: <LogoTitle />
+        // title: 'Homes',
+        // headerStyle: {
+        //     backgroundColor: '#f4511e',
+        // },
+        // headerTintColor: '#fff',
+        // headerTitleStyle: {
+        //     fontWeight: 'bold',
+        // },
     };
     render() {
         return (
@@ -33,12 +45,19 @@ class HomeScreen extends React.Component {
     }
 }
 
+
 class DetailsScreen extends React.Component {
     // Title bar Options
-    static navigationOptions = ({ navigation }) => {
+    static navigationOptions = ({ navigation , navigationOptions}) => {
+        const { params } = navigation.state;
+
         return {
-            title: navigation.getParam('otherParam', 'A Nested Details Screen'),
-        }
+            title: params ? params.otherParam : 'A Nested Details Screen',
+            headerStyle: {
+                backgroundColor: navigationOptions.headerTintColor,
+            },
+            headerTintColor: navigationOptions.headerStyle.backgroundColor,
+        };
     };
     render() {
         /* 2. Get the param, provide a fallback value if not available */
