@@ -1,13 +1,16 @@
 import React from 'react';
-import { Text, View, Button, Image, StyleSheet } from 'react-native';
+import { Text, View, Button, Image, StyleSheet, AsyncStorage, StatusBar,Platform } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { createBottomTabNavigator, createStackNavigator, createDrawerNavigator,createAppContainer } from 'react-navigation';
+import { createBottomTabNavigator, createStackNavigator, createDrawerNavigator,createAppContainer, createSwitchNavigator } from 'react-navigation';
+// import AuthLoadingScreen from './AuthLoadingScreen'
+import {SignInScreen, AuthLoadingScreen} from './SignInScreen'
 
 class DetailsScreen extends React.Component {
     render() {
         return (
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                 <Text>Details!</Text>
+                <StatusBar barStyle="default" backgroundColor = "#00BCD4" />
             </View>
         );
     }
@@ -15,6 +18,7 @@ class DetailsScreen extends React.Component {
 
 
 class HomeScreen extends React.Component {
+
     static navigationOptions = (navigation) => {
 
         return {
@@ -26,20 +30,32 @@ class HomeScreen extends React.Component {
     };
 
     render() {
+        const isAndroid = Platform.OS==='android';
         return (
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                <StatusBar
+                    barStyle="light-content"
+                    backgroundColor="#6a51ae"
+                />
                 <Text>Home!</Text>
                 <Button
                     title="Go to Details"
                     onPress={() => this.props.navigation.navigate('Details')}
+                    color={isAndroid ? "blue" : "#f4511e"}
                 />
                 <Button
                     title="Open Drawer"
                     onPress={() => this.props.navigation.toggleDrawer()}
                 />
+                <Button title="Actually, sign me out :)" onPress={this._signOutAsync} />
             </View>
         );
     }
+
+    _signOutAsync = async () => {
+        await AsyncStorage.clear();
+        this.props.navigation.navigate('Auth');
+    };
 }
 
 class SettingsScreen extends React.Component {
@@ -165,6 +181,8 @@ const SettingsStack = createStackNavigator({
     Details: DetailsScreen,
 });
 
+const AuthStack = createStackNavigator({ SignIn : SignInScreen})
+
 const TabNavigator = createBottomTabNavigator(
     {
         Home: HomeDrawerStack,
@@ -201,4 +219,16 @@ const TabNavigator = createBottomTabNavigator(
 
 
 
-export default createAppContainer(TabNavigator);
+export default createAppContainer(createSwitchNavigator(
+    {
+        AuthLoading: AuthLoadingScreen,
+        App: TabNavigator,
+        Auth: AuthStack,
+    },
+    {
+        initialRouteName: 'AuthLoading'
+    },
+    )
+)
+
+
