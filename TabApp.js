@@ -1,11 +1,16 @@
 import React from 'react';
 import { Text, View, Button, Image, StyleSheet, AsyncStorage, StatusBar,Platform } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { createBottomTabNavigator, createStackNavigator, createDrawerNavigator,createAppContainer, createSwitchNavigator } from 'react-navigation';
+import { createBottomTabNavigator, createStackNavigator, createDrawerNavigator,createAppContainer, createSwitchNavigator, withNavigation } from 'react-navigation';
 // import AuthLoadingScreen from './AuthLoadingScreen'
 import {SignInScreen, AuthLoadingScreen} from './SignInScreen'
 
 class DetailsScreen extends React.Component {
+    static navigationOptions = (navigation) =>{
+      return {
+          headerTitle: 'Details',
+      }
+    };
     render() {
         return (
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -24,7 +29,7 @@ class HomeScreen extends React.Component {
         return {
             headerTitle: 'Home',
             headerLeft: (
-                <Button title="Info" onPress={()=> alert('test')} color="#fff"/>
+                <Button title="Info" onPress={()=> navigation.navigation.toggleDrawer()} color="#fff"/>
             ),
         };
     };
@@ -174,6 +179,7 @@ const HomeDrawerStack = createDrawerNavigator(
         }
     }
 )
+
 
 
 const SettingsStack = createStackNavigator({
