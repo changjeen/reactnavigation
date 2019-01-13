@@ -1,7 +1,7 @@
 import React from 'react';
-import { Text, View, Button } from 'react-native';
+import { Text, View, Button, Image, StyleSheet } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { createBottomTabNavigator, createStackNavigator, createAppContainer } from 'react-navigation';
+import { createBottomTabNavigator, createStackNavigator, createDrawerNavigator,createAppContainer } from 'react-navigation';
 
 class DetailsScreen extends React.Component {
     render() {
@@ -15,6 +15,16 @@ class DetailsScreen extends React.Component {
 
 
 class HomeScreen extends React.Component {
+    static navigationOptions = (navigation) => {
+
+        return {
+            headerTitle: 'Home',
+            headerLeft: (
+                <Button title="Info" onPress={()=> alert('test')} color="#fff"/>
+            ),
+        };
+    };
+
     render() {
         return (
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -22,6 +32,10 @@ class HomeScreen extends React.Component {
                 <Button
                     title="Go to Details"
                     onPress={() => this.props.navigation.navigate('Details')}
+                />
+                <Button
+                    title="Open Drawer"
+                    onPress={() => this.props.navigation.toggleDrawer()}
                 />
             </View>
         );
@@ -93,10 +107,58 @@ const getTabBarIcon = (navigation, focused, tintColor) => {
     // You can return any component that you like here!
     return <IconComponent name={iconName} size={25} color={tintColor} />;
 };
-const HomeStack = createStackNavigator({
-    Home: HomeScreen,
-    Details: DetailsScreen,
+
+const styles = StyleSheet.create({
+    icon: {
+        width:24,
+        height:24,
+    },
 });
+
+
+const HomeStack = createStackNavigator(
+    {
+        Home: HomeScreen,
+        Details: DetailsScreen,
+    },
+    {
+        initialRouteName: 'Home',
+        /* The header config from HomeScreen is now here */
+        defaultNavigationOptions: {
+            headerStyle: {
+                backgroundColor: '#f4511e',
+            },
+            headerTintColor: '#fff',
+            headerTitleStyle: {
+                fontWeight: 'bold',
+            },
+
+        },
+    }
+
+);
+
+const HomeDrawerStack = createDrawerNavigator(
+    {
+        Home:
+            {
+                screen: HomeStack,
+            },
+    },
+    {
+        defaultNavigationOptions:{
+            drawerLabel: 'Home menu',
+            drawerIcon: ({ tintColor }) => (
+                <Image
+                    source={require('./spiro.png')}
+                    style={[styles.icon, {tintColor:tintColor}]}
+                />
+
+            ),
+        }
+    }
+)
+
 
 const SettingsStack = createStackNavigator({
     Settings: SettingsScreen,
@@ -105,7 +167,7 @@ const SettingsStack = createStackNavigator({
 
 const TabNavigator = createBottomTabNavigator(
     {
-        Home: HomeStack,
+        Home: HomeDrawerStack,
         Settings: SettingsStack,
     },
     {
